@@ -1,7 +1,7 @@
 {
   "name": "chores",
   "version": "1.0.0",
-  "main": "./src/main.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "SET NODE_OPTIONS=--openssl-legacy-provider && expo start",
     "android": "expo start --android",
