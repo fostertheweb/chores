@@ -1,15 +1,23 @@
 import { registerRootComponent } from "expo";
-import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+const Stack = createNativeStackNavigator();
+
+const ChoresScreen = () => (
+  <View className="flex-1 items-center justify-center">
+    <Text>Chores</Text>
+  </View>
+);
 
 function App() {
   return (
-    <View className="flex-1 items-center justify-center bg-green-300">
-      <Text className="text-xl text-green-900 font-bold">
-        Open up App.js to start working on your app!
-      </Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Chores" component={ChoresScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
