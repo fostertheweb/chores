@@ -1,4 +1,4 @@
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 import { Chore } from "./CreateChore";
 
 export default function ChoresScreen() {
@@ -17,22 +17,42 @@ export default function ChoresScreen() {
       interval: 2,
       interval_unit: "weeks",
     },
+    {
+      id: 2,
+      name: "Riley Pills",
+      icon: "pill-rx",
+      interval: 1,
+      interval_unit: "months",
+    },
+    {
+      id: 3,
+      name: "Water Plants",
+      icon: "watering-can",
+      interval: 1,
+      interval_unit: "months",
+    },
   ];
   const renderItem = ({ item }) => (
-    <View className="w-1/3 border-2 border-green-300">
-      <Text className="text-black">{item.name}</Text>
-    </View>
+    <Pressable
+      onPress={() => alert("Edit " + item.name)}
+      onLongPress={() => alert("Complete " + item.name)}
+      style={{ margin: 8 }}
+      className="flex-1 border border-gray-300 rounded shadow bg-white p-4 flex flex-col items-center justify-center"
+    >
+      <View className="w-16 h-16 rounded-full bg-gray-200"></View>
+      <Text className="text-black mt-2">{item.name}</Text>
+    </Pressable>
   );
   const keyExtractor = (item: Chore) => item.id;
 
   return (
-    <View className="p-4">
+    <View className="">
       <FlatList
-        ItemSeparatorComponent={() => <View className="w-4"></View>}
         data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         numColumns={3}
+        className="p-2 h-screen w-screen"
       />
     </View>
   );
