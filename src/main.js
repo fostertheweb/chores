@@ -1,30 +1,37 @@
 import { registerRootComponent } from "expo";
-import { Button, Text, View } from "react-native";
+import { Button } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ChoresScreen from "./screens/Chores";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import ChoresScreen from "./screens/Chores";
+import AddChoreScreen from "./screens/AddChore";
+
+const queryClient = new QueryClient();
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Chores"
-          component={ChoresScreen}
-          options={{
-            headerRight: () => (
-              <Button
-                onPress={() => alert("This is a button!")}
-                title="Add"
-                color="#000"
-              />
-            ),
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Chores"
+            component={ChoresScreen}
+            options={({ navigation }) => ({
+              headerRight: () => (
+                <Button
+                  onPress={() => navigation.navigate("Add Chore")}
+                  title="Add"
+                  color="#000"
+                />
+              ),
+            })}
+          />
+          <Stack.Screen name="Add Chore" component={AddChoreScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
 

@@ -1,5 +1,5 @@
 import { FlatList, Pressable, Text, View } from "react-native";
-import { Chore } from "./CreateChore";
+import { Chore } from "./AddChore";
 
 export default function ChoresScreen() {
   const data: Chore[] = [
