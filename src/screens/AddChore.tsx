@@ -80,7 +80,12 @@ export default function AddChoreScreen() {
     return (
       <Pressable
         onPress={() => alert("Select " + item.description)}
-        className="p-3"
+        className="p-4"
+        style={{
+          flex: 1,
+          maxWidth: "25%",
+          alignItems: "center",
+        }}
       >
         <Image
           style={{ height: 64, width: 64 }}
@@ -92,14 +97,16 @@ export default function AddChoreScreen() {
 
   // TODO: Search button on keyboard, dismisses on submit
   return (
-    <View className="p-4 flex-1 items-center">
-      <TextInput
-        className="bg-white rounded w-full p-4 border-b border-gray-400"
-        onSubmitEditing={handleSubmit}
-        placeholder="Search for Icon"
-        value={query}
-      />
-      <View>
+    <View className="flex-1 items-center">
+      <View className="p-4 w-screen">
+        <TextInput
+          className="bg-white rounded w-full p-4 border-b border-gray-400"
+          onSubmitEditing={handleSubmit}
+          placeholder="Search for Icon"
+          value={query}
+        />
+      </View>
+      <View className="w-screen flex-row flex-wrap flex-4 mx-auto items-center">
         {isLoading && <Text>Loading...</Text>}
         {results && (
           <FlatList
@@ -107,11 +114,6 @@ export default function AddChoreScreen() {
             renderItem={renderItem}
             keyExtractor={keyExtractor}
             numColumns={4}
-            contentContainerStyle={{
-              display: "flex",
-              alignItems: "center",
-            }}
-            className="mt-4 h-screen w-screen"
           />
         )}
       </View>
