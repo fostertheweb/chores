@@ -1,5 +1,12 @@
-import { useEffect } from "react";
-import { View, Text } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  View,
+  Text,
+  TextInput,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation } from "@tanstack/react-query";
 
@@ -10,6 +17,22 @@ async function storeIconAccess(data) {
   } catch (err) {
     console.log(err);
   }
+}
+
+// TODO: smaller page size
+async function getIconSearchResults(q: string) {
+  const storedData = await AsyncStorage.getItem("@icon_access");
+  const { token } = JSON.parse(storedData);
+  const url = `https://api.flaticon.com/v3/search/icons/priority?q=${q}`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return await response.json();
 }
 
 async function getIconAccessToken() {
@@ -30,19 +53,67 @@ async function getIconAccessToken() {
 }
 
 export default function AddChoreScreen() {
-  const { mutate, data } = useMutation(getIconAccessToken, {
+  const [query, setQuery] = useState();
+  const { mutate: getToken } = useMutation(getIconAccessToken, {
     async onSuccess({ data }) {
       await storeIconAccess(data);
     },
   });
+  const {
+    mutate: search,
+    data: results,
+    isLoading,
+  } = useMutation(getIconSearchResults);
+
+  function handleTextChange(q: string) {
+    search(q);
+  }
 
   useEffect(() => {
-    mutate();
+    getToken();
   }, []);
 
+  const keyExtractor = (item) => item.id;
+  const renderItem = ({ item }) => {
+    // TODO: responsize gaps
+    return (
+      <Pressable
+        onPress={() => alert("Select " + item.description)}
+        className="p-3"
+      >
+        <Image
+          style={{ height: 64, width: 64 }}
+          source={{ uri: item.images["64"] }}
+        />
+      </Pressable>
+    );
+  };
+
+  // TODO: Search button on keyboard, dismisses on submit
   return (
-    <View className="flex-1 items-center justify-center">
-      <Text>Create Chore</Text>
+    <View className="p-4 flex-1 items-center">
+      <TextInput
+        className="bg-white rounded w-full p-4 border-b border-gray-400"
+        onChangeText={handleTextChange}
+        placeholder="Search for Icon"
+        value={query}
+      />
+      <View>
+        {isLoading && <Text>Loading...</Text>}
+        {results && (
+          <FlatList
+            data={results.data}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            numColumns={4}
+            contentContainerStyle={{
+              display: "flex",
+              alignItems: "center",
+            }}
+            className="mt-4 h-screen w-screen"
+          />
+        )}
+      </View>
     </View>
   );
 }
