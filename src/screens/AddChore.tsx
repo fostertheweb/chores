@@ -8,7 +8,10 @@ import {
   TextInput,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 import { useMutation } from "@tanstack/react-query";
+
+const apikey = Constants.expoConfig.extra.flaticonApiKey;
 
 async function storeIconAccess(data) {
   try {
@@ -43,9 +46,7 @@ async function getIconAccessToken() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        apikey: "",
-      }),
+      body: JSON.stringify({ apikey }),
     }
   );
 
@@ -65,8 +66,8 @@ export default function AddChoreScreen() {
     isLoading,
   } = useMutation(getIconSearchResults);
 
-  function handleTextChange(q: string) {
-    search(q);
+  function handleSubmit(e) {
+    search(e.nativeEvent.text);
   }
 
   useEffect(() => {
@@ -94,7 +95,7 @@ export default function AddChoreScreen() {
     <View className="p-4 flex-1 items-center">
       <TextInput
         className="bg-white rounded w-full p-4 border-b border-gray-400"
-        onChangeText={handleTextChange}
+        onSubmitEditing={handleSubmit}
         placeholder="Search for Icon"
         value={query}
       />
