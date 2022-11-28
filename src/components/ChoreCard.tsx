@@ -4,7 +4,7 @@ export default function ChoreCard() {
   return (
     <View>
       <View>Icon</View>
-      <Text>Chore Name</Text>
+      <Text>Chore Desc</Text>
     </View>
   );
 }
