@@ -92,13 +92,7 @@ async function getChores() {
 async function storeChore(data) {
   try {
     const chores = await getChores();
-
-    console.log({ store: chores });
-
     const updated = [...chores, data];
-
-    console.log({ updated });
-
     await AsyncStorage.setItem("@chores", JSON.stringify(updated));
   } catch (err) {
     console.log(err);

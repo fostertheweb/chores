@@ -1,20 +1,32 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery } from "@tanstack/react-query";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useFocusEffect } from "@react-navigation/native";
+
 import { Chore } from "./AddChore";
 
 export default function ChoresScreen() {
   // useEffect(async () => await AsyncStorage.clear(), []);
 
-  const { data } = useQuery(["chores"], () => getChores());
+  const { data, refetch } = useQuery(["chores"], getChores);
+  const enabledRef = useRef(false);
 
-  console.log({ data });
+  useFocusEffect(
+    useCallback(() => {
+      if (enabledRef.current) {
+        console.log("Refetching");
+        refetch();
+      } else {
+        enabledRef.current = true;
+      }
+    }, [refetch])
+  );
 
   const renderItem = ({ item }) => (
     <View
-      style={{ flex: 1, maxWidth: "33.3%", alignItems: "stretch" }}
+      style={{ flex: 3, maxWidth: "33.3%", alignItems: "stretch" }}
       className="p-2"
     >
       <Pressable
@@ -22,9 +34,9 @@ export default function ChoresScreen() {
         onLongPress={() => alert("Complete " + item.description)}
         className="flex-1 border border-gray-300 rounded shadow bg-white p-4 flex items-center justify-center"
       >
-        <View className="w-16 h-16 flex items-center justify-center rounded-full bg-gray-200">
+        <View className="w-16 h-16 flex items-center justify-center rounded-full bg-transparent">
           <Image
-            style={{ height: 36, width: 36 }}
+            style={{ height: 48, width: 48 }}
             source={{ uri: item.icon }}
           />
         </View>
