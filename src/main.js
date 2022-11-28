@@ -28,7 +28,15 @@ function App() {
               ),
             })}
           />
-          <Stack.Screen name="Add Chore" component={AddChoreScreen} />
+          <Stack.Screen
+            name="Add Chore"
+            component={AddChoreScreen}
+            options={{
+              headerRight: () => (
+                <Button title="Done" color="#000" disabled={true} />
+              ),
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </QueryClientProvider>
