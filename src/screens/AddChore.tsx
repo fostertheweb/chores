@@ -11,22 +11,26 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import uuid from "react-native-uuid";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { StatusBar } from "expo-status-bar";
 
 import IconSearch from "./IconSearch";
-import { StatusBar } from "expo-status-bar";
 import ChoreCard from "../components/ChoreCard";
 import { Chore } from "../types/Chores";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function AddChoreScreen({ navigation }) {
   const queryClient = useQueryClient();
+  const { mutate: addChore } = useMutation(storeChore, {
+    onSuccess(chore) {
+      queryClient.setQueryData(["chores"], (chores) => [...chores, chore]);
+    },
+  });
   const [chore, setChore] = useState(null);
   const [isIconSearchOpen, setIconSearchOpen] = useState(false);
   const [icon, setSelectedIcon] = useState();
 
   function handleDone() {
-    storeChore({ id: uuid.v4(), ...chore });
-    queryClient.refetchQueries(["chores"]);
+    addChore({ id: uuid.v4(), ...chore });
     navigation.navigate("Chores");
   }
 
@@ -90,11 +94,8 @@ async function getChores() {
 }
 
 async function storeChore(data) {
-  try {
-    const chores = await getChores();
-    const updated = [...chores, data];
-    await AsyncStorage.setItem("@chores", JSON.stringify(updated));
-  } catch (err) {
-    console.log(err);
-  }
+  const chores = await getChores();
+  const updated = [...chores, data];
+  await AsyncStorage.setItem("@chores", JSON.stringify(updated));
+  return data;
 }

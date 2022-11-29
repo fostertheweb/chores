@@ -1,28 +1,17 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect } from "react";
+import { FlatList, Image, Pressable, Text, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery } from "@tanstack/react-query";
-import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { useFocusEffect } from "@react-navigation/native";
 
 import { Chore } from "./AddChore";
 
 export default function ChoresScreen() {
   // useEffect(async () => await AsyncStorage.clear(), []);
+  const { data } = useQuery(["chores"], getChores);
 
-  const { data, refetch } = useQuery(["chores"], getChores);
-  const enabledRef = useRef(false);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (enabledRef.current) {
-        console.log("Refetching");
-        refetch();
-      } else {
-        enabledRef.current = true;
-      }
-    }, [refetch])
-  );
+  // TODO: update countdowns on refocus
 
   const renderItem = ({ item }) => (
     <View
@@ -32,7 +21,7 @@ export default function ChoresScreen() {
       <Pressable
         onPress={() => alert("Edit " + item.description)}
         onLongPress={() => alert("Complete " + item.description)}
-        className="flex-1 border border-gray-300 rounded shadow bg-white p-4 flex items-center justify-center"
+        className="flex-1 border border-gray-300 rounded shadow bg-white px-2 py-3 flex items-center shrink-0 justify-center"
       >
         <View className="w-16 h-16 flex items-center justify-center rounded-full bg-transparent">
           <Image
