@@ -30,7 +30,7 @@ export default function AddChoreScreen({ navigation }) {
     defaultValues: {
       icon: "",
       description: "",
-      interval: 1,
+      interval: "1",
       interval_unit: "week",
     },
   });
@@ -114,8 +114,8 @@ export default function AddChoreScreen({ navigation }) {
             rules={{ required: true }}
             render={({ field: { onBlur, onChange, value } }) => (
               <TextInput
-                className="py-2 text-xl mr-2 border-b-2 border-gray-200"
-                placeholder="Number"
+                className="py-2 w-8 text-center text-xl mr-2 border-b-2 border-gray-200"
+                keyboardType="numeric"
                 onChangeText={(text) => onChange(text)}
                 onBlur={onBlur}
                 value={value}
