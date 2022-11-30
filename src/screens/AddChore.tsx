@@ -17,30 +17,47 @@ import { StatusBar } from "expo-status-bar";
 import IconSearch from "./IconSearch";
 import ChoreCard from "../components/ChoreCard";
 import { Chore } from "../types/Chores";
+import { Controller, useForm } from "react-hook-form";
 
 export default function AddChoreScreen({ navigation }) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      icon: "",
+      description: "",
+      interval: 1,
+      interval_unit: "week",
+    },
+  });
+
   const queryClient = useQueryClient();
   const { mutate: addChore } = useMutation(storeChore, {
     onSuccess(chore) {
       queryClient.setQueryData(["chores"], (chores) => [...chores, chore]);
     },
   });
-  const [chore, setChore] = useState(null);
+
   const [isIconSearchOpen, setIconSearchOpen] = useState(false);
   const [icon, setSelectedIcon] = useState();
-
-  function handleDone() {
-    addChore({ id: uuid.v4(), ...chore });
-    navigation.navigate("Chores");
-  }
 
   useEffect(() => {
     navigation.setOptions({
       headerRight() {
-        return <Button title="Done" color="#000" onPress={handleDone} />;
+        return (
+          <Button title="Done" color="#000" onPress={handleSubmit(onSubmit)} />
+        );
       },
     });
-  }, [handleDone]);
+  }, [onSubmit]);
+
+  function onSubmit(data) {
+    console.log(data);
+    // addChore({ id: uuid.v4(), ...chore });
+    // navigation.navigate("Chores");
+  }
 
   function handleIconSelection(icon) {
     setSelectedIcon(icon);
@@ -63,13 +80,41 @@ export default function AddChoreScreen({ navigation }) {
         </View>
       </Pressable>
 
-      <TextInput
-        className="mt-4 w-full p-2 text-center text-3xl border-b-2 border-gray-200"
-        placeholder="Chore Description"
-        onEndEditing={(e) =>
-          setChore((chore) => ({ description: e.nativeEvent.text, ...chore }))
-        }
-      />
+      <View>
+        <Text>What are you doing?</Text>
+        <Controller
+          name="description"
+          control={control}
+          rules={{ required: true }}
+          render={({ field: { onBlur, onChange, value } }) => (
+            <TextInput
+              className="mt-4 w-full p-2 text-center text-3xl border-b-2 border-gray-200"
+              placeholder="Chore Description"
+              onChangeText={(text) => onChange(text)}
+              onBlur={onBlur}
+              value={value}
+            />
+          )}
+        />
+
+        <Text>How often?</Text>
+        <Controller
+          name="interval"
+          control={control}
+          rules={{ required: true }}
+          render={({ field: { onBlur, onChange, value } }) => (
+            <TextInput
+              className="mt-4 w-full p-2 text-center text-3xl border-b-2 border-gray-200"
+              placeholder="Number"
+              onChangeText={(text) => onChange(text)}
+              onBlur={onBlur}
+              value={value}
+            />
+          )}
+        />
+
+        <Text>{JSON.stringify(errors)}</Text>
+      </View>
 
       <Modal
         animationType="slide"
