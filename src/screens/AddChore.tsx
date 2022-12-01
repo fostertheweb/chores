@@ -23,6 +23,7 @@ import IconsIcon from "../components/IconsIcon";
 
 export default function AddChoreScreen({ navigation }) {
   const {
+    setValue,
     control,
     handleSubmit,
     formState: { errors },
@@ -31,7 +32,7 @@ export default function AddChoreScreen({ navigation }) {
       icon: "",
       description: "",
       interval: "1",
-      interval_unit: "week",
+      interval_unit: "day",
     },
   });
 
@@ -55,18 +56,17 @@ export default function AddChoreScreen({ navigation }) {
     });
   }, [onSubmit]);
 
-  function onSubmit(data) {
-    console.log(data);
-    // addChore({ id: uuid.v4(), ...chore });
-    // navigation.navigate("Chores");
+  function onSubmit(chore) {
+    console.log(chore);
+    addChore({ id: uuid.v4(), ...chore });
+    navigation.navigate("Chores");
   }
 
   function handleIconSelection(icon) {
+    setValue("icon", icon.images["64"]);
     setSelectedIcon(icon);
-    setChore((chore) => ({ icon: icon.images["64"], ...chore }));
     setIconSearchOpen(false);
   }
-  const [selectedLanguage, setSelectedLanguage] = useState();
 
   return (
     <View className="p-8 flex items-center">
@@ -89,37 +89,42 @@ export default function AddChoreScreen({ navigation }) {
       </Pressable>
 
       <View className="w-full">
-        <Text className="text-xl mt-6">What are you doing?</Text>
+        <Text className="text-2xl mt-6 font-medium">What</Text>
         <Controller
           name="description"
           control={control}
           rules={{ required: true }}
           render={({ field: { onBlur, onChange, value } }) => (
-            <TextInput
-              className="w-full py-2 text-xl border-b-2 border-gray-200"
-              placeholder="Chore Description"
-              onChangeText={(text) => onChange(text)}
-              onBlur={onBlur}
-              value={value}
-            />
+            <View className="mt-2">
+              <TextInput
+                className="p-2 w-full text-xl border-b-2 bg-white rounded border-gray-300"
+                placeholder="Description"
+                onChangeText={(text) => onChange(text)}
+                onBlur={onBlur}
+                value={value}
+              />
+            </View>
           )}
         />
 
-        <Text className="text-xl mt-6">How often?</Text>
-        <View className="flex flex-row items-center">
-          <Text className="mr-2 text-xl">Every</Text>
+        <Text className="text-2xl mt-6 font-medium">When</Text>
+        <View className="mt-2 flex flex-row items-center">
+          <Text className="mr-3 text-xl text-gray-700">every</Text>
           <Controller
             name="interval"
             control={control}
             rules={{ required: true }}
             render={({ field: { onBlur, onChange, value } }) => (
-              <TextInput
-                className="py-2 w-8 text-center text-xl mr-2 border-b-2 border-gray-200"
-                keyboardType="numeric"
-                onChangeText={(text) => onChange(text)}
-                onBlur={onBlur}
-                value={value}
-              />
+              <View className="mr-2 w-14">
+                <TextInput
+                  className="p-2 text-center text-xl border-b-2 bg-white rounded border-gray-300"
+                  placeholder="1"
+                  keyboardType="numeric"
+                  onChangeText={(text) => onChange(text)}
+                  onBlur={onBlur}
+                  value={value}
+                />
+              </View>
             )}
           />
           <Controller

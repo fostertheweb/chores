@@ -7,6 +7,9 @@ import { StatusBar } from "expo-status-bar";
 
 import { Chore } from "./AddChore";
 
+// TODO: Today Tab - summary of immediate needs
+// TODO: Chores List Tab - all chores, add, edit, sort by time
+
 export default function ChoresScreen() {
   // useEffect(async () => await AsyncStorage.clear(), []);
   const { data } = useQuery(["chores"], getChores);
