@@ -16,26 +16,56 @@ export default function ChoresScreen() {
 
   // TODO: update countdowns on refocus
 
-  const renderItem = ({ item }) => (
-    <View
-      style={{ flex: 3, maxWidth: "33.3%", alignItems: "stretch" }}
-      className="p-2"
-    >
-      <Pressable
-        onPress={() => alert("Edit " + item.description)}
-        onLongPress={() => alert("Complete " + item.description)}
-        className="flex-1 border border-gray-300 rounded shadow bg-white px-2 py-3 flex items-center shrink-0 justify-center"
+  function milliseconds(unit) {
+    switch (unit) {
+      case "day":
+        return 24 * 60 * 60 * 1000;
+        break;
+      case "week":
+        return 7 * 24 * 60 * 60 * 1000;
+        break;
+      case "month":
+        return 4 * 7 * 24 * 60 * 60 * 1000;
+        break;
+    }
+  }
+
+  const renderItem = ({ item }) => {
+    const now = Date.now();
+    const multiplier = item.interval;
+    const fromNow = multiplier * milliseconds(item.interval_unit);
+    const remaining =
+      item.last_completed_at > fromNow
+        ? item.last_completed_at - fromNow
+        : fromNow;
+    const when = now + remaining;
+
+    const date = new Date(when);
+
+    return (
+      <View
+        style={{ flex: 3, maxWidth: "33.3%", alignItems: "stretch" }}
+        className="p-2"
       >
-        <View className="w-16 h-16 flex items-center justify-center rounded-full bg-transparent">
-          <Image
-            style={{ height: 48, width: 48 }}
-            source={{ uri: item.icon }}
-          />
-        </View>
-        <Text className="text-black mt-2">{item.description}</Text>
-      </Pressable>
-    </View>
-  );
+        <Pressable
+          onPress={() => alert("Edit " + item.description)}
+          onLongPress={() => alert("Complete " + item.description)}
+          className="flex-1 border border-gray-300 rounded shadow bg-white px-2 py-3 flex items-center shrink-0 justify-center"
+        >
+          <View className="w-16 h-16 flex items-center justify-center rounded-full bg-transparent">
+            <Image
+              style={{ height: 48, width: 48 }}
+              source={{ uri: item.icon }}
+            />
+          </View>
+          <Text className="text-black mt-2">{item.description}</Text>
+          <Text className="text-gray-600 mt-1">
+            {date.toLocaleDateString()}
+          </Text>
+        </Pressable>
+      </View>
+    );
+  };
   const keyExtractor = (item: Chore, index) => item.id;
 
   return (

@@ -4,5 +4,5 @@ export type Chore = {
   icon: string;
   interval: number;
   interval_unit: "days" | "weeks" | "months";
-  last_completed_at?: DateTime;
+  last_completed_at: number;
 };

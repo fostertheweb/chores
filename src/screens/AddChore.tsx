@@ -33,6 +33,7 @@ export default function AddChoreScreen({ navigation }) {
       description: "",
       interval: "1",
       interval_unit: "day",
+      last_completed_at: 0,
     },
   });
 
@@ -57,7 +58,6 @@ export default function AddChoreScreen({ navigation }) {
   }, [onSubmit]);
 
   function onSubmit(chore) {
-    console.log(chore);
     addChore({ id: uuid.v4(), ...chore });
     navigation.navigate("Chores");
   }
