@@ -11,7 +11,7 @@ import { Chore } from "./AddChore";
 // TODO: Today Tab - summary of immediate needs
 // TODO: Chores List Tab - all chores, add, edit, sort by time
 
-export default function ChoresScreen() {
+export default function ChoresScreen({ navigation }) {
   // useEffect(async () => await AsyncStorage.clear(), []);
   const { data } = useQuery(["chores"], getChores);
 
@@ -22,13 +22,19 @@ export default function ChoresScreen() {
     const fromNow = getFromNow(duration, item.last_completed_at);
     const due = fromNow.toRelative();
 
+    function handleChorePress() {
+      navigation.navigate("View Chore", {
+        chore: JSON.stringify(item),
+      });
+    }
+
     return (
       <View
         style={{ flex: 3, maxWidth: "33.3%", alignItems: "stretch" }}
         className="p-2"
       >
         <Pressable
-          onPress={() => alert("Edit " + item.description)}
+          onPress={handleChorePress}
           onLongPress={() => alert("Complete " + item.description)}
           className="flex-1 border border-gray-300 rounded shadow bg-white px-2 py-3 flex items-center shrink-0 justify-center"
         >

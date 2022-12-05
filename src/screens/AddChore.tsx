@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
 } from "react-native";
+import Checkbox from "expo-checkbox";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import uuid from "react-native-uuid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -20,9 +21,11 @@ import IconSearch from "./IconSearch";
 import ChoreCard from "../components/ChoreCard";
 import { Chore } from "../types/Chores";
 import IconsIcon from "../components/IconsIcon";
+import { DateTime } from "luxon";
 
 export default function AddChoreScreen({ navigation }) {
   const {
+    resetField,
     setValue,
     control,
     handleSubmit,
@@ -33,6 +36,7 @@ export default function AddChoreScreen({ navigation }) {
       description: "",
       interval: "1",
       interval_unit: "day",
+      last_completed_at: null,
     },
   });
 
@@ -45,6 +49,7 @@ export default function AddChoreScreen({ navigation }) {
 
   const [isIconSearchOpen, setIconSearchOpen] = useState(false);
   const [icon, setSelectedIcon] = useState();
+  const [completed, setCompleted] = useState(false);
 
   function onSubmit(chore) {
     addChore({ id: uuid.v4(), ...chore });
@@ -55,6 +60,16 @@ export default function AddChoreScreen({ navigation }) {
     setValue("icon", icon.images["64"]);
     setSelectedIcon(icon);
     setIconSearchOpen(false);
+  }
+
+  function handleMarkAsComplete(checked: boolean) {
+    setCompleted(checked);
+
+    if (checked) {
+      setValue("last_completed_at", Date.now());
+    }
+
+    resetField("last_completed_at");
   }
 
   return (
@@ -96,7 +111,7 @@ export default function AddChoreScreen({ navigation }) {
           )}
         />
 
-        <Text className="text-2xl mt-6 font-medium">When</Text>
+        <Text className="text-2xl mt-6 font-medium">Schedule</Text>
         <View className="mt-2 flex flex-row items-center">
           <Text className="mr-3 text-xl text-gray-700">every</Text>
           <Controller
@@ -138,7 +153,18 @@ export default function AddChoreScreen({ navigation }) {
         </View>
       </View>
 
-      <View className="w-screen mt-4 p-6">
+      <View className="px-8 py-6 flex flex-row justify-start w-screen items-center">
+        <Checkbox
+          value={completed}
+          onValueChange={handleMarkAsComplete}
+          className="mr-3"
+        />
+        <Pressable onPress={() => handleMarkAsComplete(!completed)}>
+          <Text className="text-xl text-gray-600 ">Mark as completed now</Text>
+        </Pressable>
+      </View>
+
+      <View className="w-screen px-6">
         <Pressable
           onPress={handleSubmit(onSubmit)}
           className="bg-black flex items-center justify-center text-white rounded w-full p-4"

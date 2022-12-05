@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import ChoresScreen from "./screens/Chores";
 import AddChoreScreen from "./screens/AddChore";
+import ViewChoreScreen from "./screens/ViewChore";
 
 const queryClient = new QueryClient();
 const Stack = createNativeStackNavigator();
@@ -29,6 +30,7 @@ function App() {
             })}
           />
           <Stack.Screen name="Add Chore" component={AddChoreScreen} />
+          <Stack.Screen name="View Chore" component={ViewChoreScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </QueryClientProvider>
