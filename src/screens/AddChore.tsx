@@ -33,7 +33,6 @@ export default function AddChoreScreen({ navigation }) {
       description: "",
       interval: "1",
       interval_unit: "day",
-      last_completed_at: 0,
     },
   });
 
@@ -46,16 +45,6 @@ export default function AddChoreScreen({ navigation }) {
 
   const [isIconSearchOpen, setIconSearchOpen] = useState(false);
   const [icon, setSelectedIcon] = useState();
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight() {
-        return (
-          <Button title="Done" color="#000" onPress={handleSubmit(onSubmit)} />
-        );
-      },
-    });
-  }, [onSubmit]);
 
   function onSubmit(chore) {
     addChore({ id: uuid.v4(), ...chore });
@@ -120,6 +109,7 @@ export default function AddChoreScreen({ navigation }) {
                   className="p-2 text-center text-xl border-b-2 bg-white rounded border-gray-300"
                   placeholder="1"
                   keyboardType="numeric"
+                  clearTextOnFocus={true}
                   onChangeText={(text) => onChange(text)}
                   onBlur={onBlur}
                   value={value}
@@ -146,6 +136,17 @@ export default function AddChoreScreen({ navigation }) {
             )}
           />
         </View>
+      </View>
+
+      <View className="w-screen mt-4 p-6">
+        <Pressable
+          onPress={handleSubmit(onSubmit)}
+          className="bg-black flex items-center justify-center text-white rounded w-full p-4"
+        >
+          <Text className="text-white text-xl tracking-wide font-medium">
+            Add Chore
+          </Text>
+        </Pressable>
       </View>
 
       <Modal

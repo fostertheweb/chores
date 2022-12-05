@@ -4,6 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
+import { DateTime, Duration } from "luxon";
 
 import { Chore } from "./AddChore";
 
@@ -16,31 +17,10 @@ export default function ChoresScreen() {
 
   // TODO: update countdowns on refocus
 
-  function milliseconds(unit) {
-    switch (unit) {
-      case "day":
-        return 24 * 60 * 60 * 1000;
-        break;
-      case "week":
-        return 7 * 24 * 60 * 60 * 1000;
-        break;
-      case "month":
-        return 4 * 7 * 24 * 60 * 60 * 1000;
-        break;
-    }
-  }
-
   const renderItem = ({ item }) => {
-    const now = Date.now();
-    const multiplier = item.interval;
-    const fromNow = multiplier * milliseconds(item.interval_unit);
-    const remaining =
-      item.last_completed_at > fromNow
-        ? item.last_completed_at - fromNow
-        : fromNow;
-    const when = now + remaining;
-
-    const date = new Date(when);
+    const duration = getDuration(item.interval_unit, item.interval).toObject();
+    const fromNow = getFromNow(duration, item.last_completed_at);
+    const due = fromNow.toRelative();
 
     return (
       <View
@@ -59,9 +39,7 @@ export default function ChoresScreen() {
             />
           </View>
           <Text className="text-black mt-2">{item.description}</Text>
-          <Text className="text-gray-600 mt-1">
-            {date.toLocaleDateString()}
-          </Text>
+          <Text className="text-gray-400 mt-1 text-xs">{due}</Text>
         </Pressable>
       </View>
     );
@@ -92,4 +70,26 @@ async function getChores() {
   }
 
   return [];
+}
+
+function getDuration(unit, interval) {
+  switch (unit) {
+    case "day":
+      return Duration.fromObject({ days: interval });
+      break;
+    case "week":
+      return Duration.fromObject({ weeks: interval });
+      break;
+    case "month":
+      return Duration.fromObject({ months: interval });
+      break;
+  }
+}
+
+function getFromNow(duration, lastCompletedAt) {
+  if (lastCompletedAt) {
+    return DateTime.fromMillis(lastCompletedAt).plus(duration);
+  }
+
+  return DateTime.now().plus(duration);
 }
