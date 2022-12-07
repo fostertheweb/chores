@@ -15,6 +15,8 @@ export default function ChoresScreen({ navigation }) {
   // useEffect(async () => await AsyncStorage.clear(), []);
   const { data } = useQuery(["chores"], getChores);
 
+  console.log({ chores: data });
+
   // TODO: update countdowns on refocus
 
   const renderItem = ({ item }) => {

@@ -25,7 +25,6 @@ import { DateTime } from "luxon";
 
 export default function AddChoreScreen({ navigation }) {
   const {
-    resetField,
     setValue,
     control,
     handleSubmit,
@@ -69,7 +68,7 @@ export default function AddChoreScreen({ navigation }) {
       setValue("last_completed_at", Date.now());
     }
 
-    resetField("last_completed_at");
+    setValue("last_completed_at", null);
   }
 
   return (
